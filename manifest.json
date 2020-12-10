@@ -1,0 +1,41 @@
+{
+	"manifest_version": 2,
+	"name": "Where's the Website",
+	"version": "1.0",
+	"description": "Get website remote IP Address and Location",
+	"icons": {
+		"30": "/imgs/icon-30.png",
+		"60": "/imgs/icon-60.png",
+		"90": "/imgs/icon-90.png"
+	},
+	"permissions": [
+		"webRequest",
+		"clipboardWrite",
+		"tabs",
+		"http://*/*",
+		"https://*/*",
+		"ftp://*/*"
+	],
+	"background": {
+		"scripts": [
+			"/js/jquery-3.5.1.min.js",
+			"/js/background.js"
+		]
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"http://*/*",
+				"https://*/*",
+				"ftp://*/*"
+			],
+			"css": [
+				"/css/website.css"
+			],
+			"js": [
+				"/js/jquery-3.5.1.min.js",
+				"/js/website.js"
+			]
+		}
+	]
+}

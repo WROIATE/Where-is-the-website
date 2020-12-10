@@ -1,0 +1,39 @@
+@keyframes fadeInAnimation { 
+    0% { 
+        opacity: 0; 
+    } 
+    100% { 
+        opacity: 1; 
+     } 
+}
+
+#chrome-website-ip {
+    display: inline-block;
+    position: fixed;
+    bottom: 5px;
+    right: 5px;
+    z-index: 2147483647;
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0 .5em;
+    border: 0;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .35);
+    cursor: pointer;
+    line-height: 1.3em;
+    letter-spacing: normal;
+    text-align: right;
+    text-indent: 0;
+    text-decoration: none;
+    font-family: tahoma, arial;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    animation: fadeInAnimation ease 0.5s ;
+    user-select: none;
+}
+
+#chrome-website-ip:hover {
+    background: rgba(0, 0, 0, .7)
+}
