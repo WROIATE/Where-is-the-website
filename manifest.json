@@ -12,6 +12,7 @@
 		"webRequest",
 		"clipboardWrite",
 		"tabs",
+		"contextMenus",
 		"http://*/*",
 		"https://*/*",
 		"ftp://*/*"

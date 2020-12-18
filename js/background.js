@@ -15,6 +15,19 @@ chrome.webRequest.onCompleted.addListener(
 }, []
 );
 
+chrome.contextMenus.create({
+	title: "显示/关闭 当前页面的IP",
+	id: "wsip",
+	onclick: turn_on_off
+});
+
+function turn_on_off(info, tab) {
+	console.info(tab)
+	chrome.tabs.sendMessage(tab.id, {
+		method: "trigger"
+	})
+}
+
 chrome.extension.onMessage.addListener(
 	(request, sender, callback) => {
 		let host = url2host(sender.url)
@@ -34,6 +47,7 @@ chrome.extension.onMessage.addListener(
 								location = response.data.country
 							}
 							chrome.tabs.sendMessage(sender.tab.id, {
+								method: "location",
 								status: "success",
 								location: location
 							}, (r) => {
