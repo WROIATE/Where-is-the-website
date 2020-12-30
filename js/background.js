@@ -8,6 +8,8 @@ var IPlist = {}
 chrome.webRequest.onCompleted.addListener(
 	(details) => {
 		IPlist[url2host(details.url)] = details.ip;
+		if (details.ip == undefined)
+			console.info("Get IP Error: ", details)
 		return;
 	}, {
 	urls: [],
@@ -35,43 +37,53 @@ chrome.extension.onMessage.addListener(
 		let location = ""
 		switch (request.method) {
 			case "getIP":
-				$.ajax({
-					url: "https://clientapi.ipip.net/browser/chrome?ip=" + ip,
-					type: 'get',
-					data: {},
-					dataType: 'json',
-					success: (response) => {
-						if (response.ret == 0) {
-							if (response.data.city != "") { location = response.data.country + '-' + response.data.city; }
-							else {
-								location = response.data.country
+				if (ip != undefined) {
+					$.ajax({
+						url: "https://clientapi.ipip.net/browser/chrome?ip=" + ip,
+						type: 'get',
+						data: {},
+						dataType: 'json',
+						success: (response) => {
+							if (response.ret == 0) {
+								if (response.data.city != "") { location = response.data.country + '-' + response.data.city; }
+								else {
+									location = response.data.country
+								}
+								chrome.tabs.sendMessage(sender.tab.id, {
+									method: "location",
+									status: "success",
+									location: location
+								}, (r) => {
+									//console.info(r)
+								})
 							}
+						},
+						error: (response) => {
+							console.info(response)
 							chrome.tabs.sendMessage(sender.tab.id, {
-								method: "location",
-								status: "success",
-								location: location
+								status: "failed",
+								location: ""
 							}, (r) => {
-								//console.info(r)
+								console.info(r)
 							})
 						}
-					},
-					error: (response) => {
-						console.info(response)
-						chrome.tabs.sendMessage(sender.tab.id, {
-							status: "failed",
-							location: ""
-						}, (r) => {
-							console.info(r)
-						})
-					}
-				});
-				setTimeout(() => {
-					callback({
-						ip: ip,
-						location: location
 					})
-				}, 2000)
-				return true
+					setTimeout(() => {
+						callback({
+							status: "success",
+							ip: ip,
+							location: location
+						})
+					}, 2000)
+					return true
+				} else {
+					console.log("Can't Get IP of ", host)
+					callback({
+						status: "failed",
+						ip: "",
+						location: ""
+					})
+				};
 			default:
 				console.info("unknown method from " + sender.tab.id + " at " + sender.url)
 				break

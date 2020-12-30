@@ -5,9 +5,11 @@ chrome.runtime.onMessage.addListener(
 	function (request, sender, callback) {
 		switch (request.method) {
 			case "location":
-				let location = request.location
-				if ($("#chrome-website-location").text() == "") {
-					$("#chrome-website-location").text(location)
+				if (request.status == "success") {
+					let location = request.location
+					if ($("#chrome-website-location").text() == "") {
+						$("#chrome-website-location").text(location)
+					}
 				}
 				callback({
 					status: "success"
@@ -17,17 +19,17 @@ chrome.runtime.onMessage.addListener(
 				IPstatus = sessionStorage["IPstatus"]
 				switch (IPstatus) {
 					case "on":
-						console.log("hide",IPstatus)
+						console.log("hide", IPstatus)
 						hideIP()
 						IPstatus = "off"
 						break
 					case "off":
-						console.log("show",IPstatus)
+						console.log("show", IPstatus)
 						showIP()
 						IPstatus = "on"
 						break
 					case "none":
-						console.log("start",IPstatus)
+						console.log("start", IPstatus)
 						startIP()
 						IPstatus = "on"
 						break
@@ -45,15 +47,25 @@ function startIP() {
 	chrome.extension.sendMessage({
 		method: "getIP"
 	}, (response) => {
-		let location = response.location
-		let ip = response.ip
-		$("body").append('<div id="chrome-website-ip" ><div id="chrome-website-location">' + location + '</div><div id="chrome-website-address">' + ip + '</div></div>');
-		// double click copy IP Address
-		$("#chrome-website-ip").on('dblclick', () => {
-			copy("chrome-website-address");
-			$("#chrome-website-address").text("Copied!")
-			setTimeout(() => { $("#chrome-website-address").text(ip) }, 1500);
-		});
+		switch (response.status) {
+			case "success":
+				let location = response.location
+				let ip = response.ip
+				$("body").append('<div id="chrome-website-ip" ><div id="chrome-website-location">' + location + '</div><div id="chrome-website-address">' + ip + '</div></div>');
+				// double click copy IP Address
+				$("#chrome-website-ip").on('dblclick', () => {
+					copy("chrome-website-address");
+					$("#chrome-website-address").text("Copied!")
+					setTimeout(() => { $("#chrome-website-address").text(ip) }, 1500);
+				});
+				break
+			case "fail":
+				console.log("Can't Get IP")
+				break
+			default:
+				console.log("Unknown status: ", response.status)
+				break
+		}
 	})
 }
 
